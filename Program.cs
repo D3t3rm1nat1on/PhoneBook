@@ -5,6 +5,8 @@ namespace PhoneBook
 {
     class Program
     {
+        private static int _accessMode;
+        
         private const int TableWidth = 25;
         private static NpgsqlConnection _connection;
         private static string _connString;
@@ -34,18 +36,45 @@ namespace PhoneBook
             }
 
             Console.ForegroundColor = default;
+            
+            // ------------------ ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛИЯ --------------------- //
+            
+            UserInitialize();
+            
+            // -------------------------------------------------------------------- //
+            
 
-
-            // ------------------------- ВСТАВКА К БД ----------------------------- //
-
-
-            string sqlQuery = "select * from table_name ";
+            string sqlQuery = "select * from table_name";
             PrintResultQuery(sqlQuery);
-
             
         }
 
+        #region Commands
 
+        static void UserInitialize()
+        {
+            Console.WriteLine("Введите режим пользователя (admin, pathetic hooman)");
+            string command;
+            while (true)
+            {
+                command = Console.ReadLine();
+                
+                if (command == "pathetic hooman")
+                {
+                    _accessMode = 0;
+                    return;
+                }
+
+                if (command == "admin")
+                {
+                    _accessMode = 1;
+                    return;
+                }
+            }
+        }
+
+        #endregion
+        
         #region PrintFunctions
 
         static void PrintQuery(string query)
@@ -141,6 +170,5 @@ namespace PhoneBook
 
         #endregion
     }
-
-
+    
 }
