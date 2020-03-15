@@ -91,9 +91,9 @@ namespace PhoneBook
 
             try
             {
-                _connString = "Server=localhost;Port=5432;User Id=postgres;Password=77031985;Database=PhoneBook_DB";
+              //  _connString = "Server=localhost;Port=5432;User Id=postgres;Password=77031985;Database=PhoneBook_DB";
 
-               // _connString = "Server=localhost;Port=5432;User Id=postgres;Password=12345;Database=PhoneBook_DB";
+                _connString = "Server=localhost;Port=5432;User Id=postgres;Password=12345;Database=PhoneBook_DB";
                 _connection = new NpgsqlConnection(_connString);
                 _connection.Open();
                 Console.ForegroundColor = ConsoleColor.Green;
