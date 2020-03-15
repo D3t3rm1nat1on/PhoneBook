@@ -26,8 +26,56 @@ namespace PhoneBook
 
         private static Dictionary<string, Action> _actions = new Dictionary<string, Action>()
         {
-            {"add", () => { }},
-            {"remove", () => { }},
+            {
+                "add", () =>
+                {
+                    Console.Write("name: ");
+                    string name = Console.ReadLine();
+                    Console.Write("phone: ");
+                    string phone = Console.ReadLine();
+                    Console.Write("mobile: ");
+                    string mobile = Console.ReadLine();
+                    Console.Write("position: ");
+                    string position = Console.ReadLine();
+                    Console.Write("department: ");
+                    string department = Console.ReadLine();
+
+                    if (name.Length > 120 ||
+                        phone.Length != 5 ||
+                        !int.TryParse(phone, out _) ||
+                        mobile.Length > 20 ||
+                        position.Length > 50 ||
+                        department.Length > 50)
+                    {
+                        Console.WriteLine("incorrect data");
+                        return;
+                    }
+
+                    string sqlQuery =
+                        "insert into phonebook (name, phone, mobile, position, department) values " +
+                        $"('{name}','{phone}','{mobile}','{position}','{department}')";
+                    var command = new NpgsqlCommand(sqlQuery, _connection);
+                    command.ExecuteNonQuery();
+
+                }
+            },
+            {
+                "remove", () =>
+                {
+                    Console.Write("Введите id записи: ");
+                    if (int.TryParse(Console.ReadLine(), out int temp))
+                    {
+                        string sqlQuery = $"delete from phonebook where id = {temp}";
+                        var command = new NpgsqlCommand(sqlQuery, _connection);
+                        command.ExecuteNonQuery();
+                        Console.WriteLine("complete");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка ввода");
+                    }
+                }
+            },
             {
                 "show", () =>
                 {
@@ -76,12 +124,14 @@ namespace PhoneBook
 
                 }
             }, 
-            {"exit", () =>
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Завершение работы");
-                _exit = true;
-            }}
+                "exit", () =>
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine("Завершение работы");
+                    _exit = true;
+                }
+            }
         };
 
         private static void Main()
@@ -107,15 +157,15 @@ namespace PhoneBook
             }
 
             Console.ForegroundColor = default;
-            
+
             // ------------------ ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛИЯ --------------------- //
-            
+
             Console.WriteLine("Введите режим пользователя (admin, pathetic hooman)");
             string command;
             while (true)
             {
                 command = Console.ReadLine();
-                
+
                 if (command == "pathetic hooman")
                 {
                     _accessMode = 0;
@@ -128,24 +178,25 @@ namespace PhoneBook
                     break;
                 }
             }
-            
+
             // ----------------------------- ОСНОВНОЙ ЦИКЛ ------------------------ //
 
             while (!_exit)
             {
-                Console.WriteLine("Возможные комманды: " + string.Join(", ",_enambeCommands[_accessMode]));
+                Console.WriteLine("Возможные комманды: " + string.Join(", ", _enambeCommands[_accessMode]));
                 command = Console.ReadLine();
                 while (!_enambeCommands[_accessMode].Contains(command))
                 {
                     command = Console.ReadLine();
                 }
+
                 _actions[command].Invoke();
             }
 
-            
-            
+
+
         }
-        
+
         #region PrintFunctions
 
         static void PrintQuery(string query)
@@ -248,5 +299,5 @@ namespace PhoneBook
 
         #endregion
     }
-    
+
 }
