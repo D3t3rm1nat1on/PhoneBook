@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Npgsql;
 
 namespace PhoneBook
@@ -6,7 +8,8 @@ namespace PhoneBook
     class Program
     {
         private static int _accessMode;
-        
+        private static bool _exit = false;
+
         private const int TableWidth = 25;
         private static NpgsqlConnection _connection;
         private static string _connString;
@@ -14,6 +17,32 @@ namespace PhoneBook
         private static ConsoleColor tableColor = ConsoleColor.DarkGray;
         private static ConsoleColor columnNameColor = ConsoleColor.DarkBlue;
         private static ConsoleColor cellColor = ConsoleColor.Blue;
+
+        private static string[][] _enambeCommands =
+        {
+            new[] {"show", "exit"},
+            new[] {"show", "exit", "add", "remove"}
+        };
+
+        private static Dictionary<string, Action> _actions = new Dictionary<string, Action>()
+        {
+            {"add", () => { }},
+            {"remove", () => { }},
+            {
+                "show", () =>
+                {
+                    string sqlQuery = "select * from table_name";
+                    PrintResultQuery(sqlQuery);
+                }
+
+            },
+            {"exit", () =>
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine("Завершение работы");
+                _exit = true;
+            }}
+        };
 
         private static void Main()
         {
@@ -39,20 +68,6 @@ namespace PhoneBook
             
             // ------------------ ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛИЯ --------------------- //
             
-            UserInitialize();
-            
-            // -------------------------------------------------------------------- //
-            
-
-            string sqlQuery = "select * from table_name";
-            PrintResultQuery(sqlQuery);
-            
-        }
-
-        #region Commands
-
-        static void UserInitialize()
-        {
             Console.WriteLine("Введите режим пользователя (admin, pathetic hooman)");
             string command;
             while (true)
@@ -62,18 +77,32 @@ namespace PhoneBook
                 if (command == "pathetic hooman")
                 {
                     _accessMode = 0;
-                    return;
+                    break;
                 }
 
                 if (command == "admin")
                 {
                     _accessMode = 1;
-                    return;
+                    break;
                 }
             }
-        }
+            
+            // ----------------------------- ОСНОВНОЙ ЦИКЛ ------------------------ //
 
-        #endregion
+            while (!_exit)
+            {
+                Console.WriteLine("Возможные комманды: " + string.Join(", ",_enambeCommands[_accessMode]));
+                command = Console.ReadLine();
+                while (!_enambeCommands[_accessMode].Contains(command))
+                {
+                    command = Console.ReadLine();
+                }
+                _actions[command].Invoke();
+            }
+
+            
+            
+        }
         
         #region PrintFunctions
 

@@ -17,6 +17,7 @@
       <e p="PhoneBook.csproj" t="IncludeRecursive" />
       <e p="PhoneBook.sln" t="IncludeFlat" />
       <e p="Program.cs" t="Include" />
+      <e p="README.md" t="Include" />
     </e>
   </component>
 </project>
