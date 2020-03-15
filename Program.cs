@@ -72,7 +72,7 @@ namespace PhoneBook
                             break;
                         
                     }
-                    if(sqlQuerya!="") PrintResultQuery(sqlQuery);
+                    if(sqlQuery!="") PrintResultQuery(sqlQuery);
 
                 }
             }, 
@@ -164,7 +164,12 @@ namespace PhoneBook
 
             int count = reader.FieldCount;
 
-            
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("Совпадения не найдены");
+                return; 
+            }
+               
             string[] columnNames = new string[count];
             for (int i = 0; i < count; i++)
             {
