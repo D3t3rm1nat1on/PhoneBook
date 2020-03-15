@@ -21,7 +21,7 @@ namespace PhoneBook
         private static string[][] _enambeCommands =
         {
             new[] {"show", "find", "exit"},
-            new[] {"show", "exit", "add", "find", "remove"}
+            new[] {"add", "remove", "edit", "show", "exit"}
         };
 
         private static Dictionary<string, Action> _actions = new Dictionary<string, Action>()
@@ -68,6 +68,37 @@ namespace PhoneBook
                         string sqlQuery = $"delete from phonebook where id = {temp}";
                         var command = new NpgsqlCommand(sqlQuery, _connection);
                         command.ExecuteNonQuery();
+                        Console.WriteLine("complete");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Ошибка ввода");
+                    }
+                }
+            },
+            {
+                "edit", () =>
+                {
+                    Console.WriteLine("Введите id записи: ");
+                    if (int.TryParse(Console.ReadLine(), out int temp))
+                    {
+                        Console.WriteLine("Запись, которую изменяют: ");
+                        string sqlQuery = $"select * from phonebook where id = {temp}";
+                        PrintResultQuery(sqlQuery);
+
+                        Console.WriteLine("Поле, по которому будут вноситься изменения: ");
+                        string field = "";
+                        do 
+                        {
+                            field = Console.ReadLine();
+                        }
+                        while(field != "name" || field != "phone" || field != "mobile" ||
+                              field != "position" || field != "department");
+
+                        Console.WriteLine($"Новое значение для поля {field}: ");
+                        string data = Console.ReadLine();
+                        sqlQuery = $"update phonebook set {field} = {data} where id = {temp}";
+
                         Console.WriteLine("complete");
                     }
                     else
