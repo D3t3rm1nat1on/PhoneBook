@@ -20,7 +20,7 @@ namespace PhoneBook
 
         private static string[][] _enambeCommands =
         {
-            new[] {"show", "exit"},
+            new[] {"show", "find", "exit"},
             new[] {"add", "remove", "edit", "show", "exit"}
         };
 
@@ -112,8 +112,49 @@ namespace PhoneBook
                 {
                     string sqlQuery = "select * from phonebook";
                     PrintResultQuery(sqlQuery);
+
                 }
 
+            },
+            {
+                "find", () =>
+                {
+                    Console.WriteLine("Выберите по каким параметрам Вы желаете найти пользователя:");
+                    Console.WriteLine("name, position, department");
+                    string choise = Console.ReadLine();
+                    string sqlQuery = "";
+                    switch (choise)
+                    {
+                        case "name":
+                        {
+                            Console.WriteLine("Введите Имя");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where name = '" + choise + "';";
+                        }
+                            break;
+                        case "position":
+                        {
+                            Console.WriteLine("Введите Должность");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where \"position\" = '" + choise + "';";
+                        }
+                            break;
+                        case "department":
+                        {
+                            Console.WriteLine("Введите Департамент");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where \"department\" = '" + choise + "';";
+                        }
+                            break;
+
+                    }
+
+                    if (sqlQuery != "") PrintResultQuery(sqlQuery);
+
+                }
             },
             {
                 "exit", () =>
@@ -132,6 +173,8 @@ namespace PhoneBook
 
             try
             {
+                //_connString = "Server=localhost;Port=5432;User Id=postgres;Password=77031985;Database=PhoneBook_DB";
+
                 _connString = "Server=localhost;Port=5432;User Id=postgres;Password=12345;Database=PhoneBook_DB";
                 _connection = new NpgsqlConnection(_connString);
                 _connection.Open();
@@ -203,6 +246,13 @@ namespace PhoneBook
             var reader = command.ExecuteReader();
 
             int count = reader.FieldCount;
+
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("Совпадения не найдены");
+                reader.Close();
+                return;
+            }
 
             string[] columnNames = new string[count];
             for (int i = 0; i < count; i++)
