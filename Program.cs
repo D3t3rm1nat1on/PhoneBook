@@ -20,8 +20,8 @@ namespace PhoneBook
 
         private static string[][] _enambeCommands =
         {
-            new[] {"show", "exit"},
-            new[] {"show", "exit", "add", "remove"}
+            new[] {"show", "find", "exit"},
+            new[] {"show", "exit", "add", "find", "remove"}
         };
 
         private static Dictionary<string, Action> _actions = new Dictionary<string, Action>()
@@ -33,9 +33,49 @@ namespace PhoneBook
                 {
                     string sqlQuery = "select * from phonebook";
                     PrintResultQuery(sqlQuery);
+                    
                 }
 
             },
+            {
+                "find", () =>
+                {
+                    Console.WriteLine("Выберите по каким параметрам Вы желаете найти пользователя:");
+                    Console.WriteLine("Name, Position, Department");
+                    string choise = Console.ReadLine();
+                    string sqlQuery = "";
+                    switch (choise)
+                    {
+                        case "Name":
+                        {
+                            Console.WriteLine("Введите Имя");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where \"Name\" = '" + choise + "';";
+                        }
+                            break;
+                        case "Position":
+                        {
+                            Console.WriteLine("Введите Должность");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where \"Position\" = '" + choise + "';";
+                        }
+                            break;
+                        case "Department":
+                        {
+                            Console.WriteLine("Введите Департамент");
+                            choise = Console.ReadLine();
+                            sqlQuery = "select * from phonebook" +
+                                       " where \"Department\" = '" + choise + "';";
+                        }
+                            break;
+                        
+                    }
+                    if(sqlQuerya!="") PrintResultQuery(sqlQuery);
+
+                }
+            }, 
             {"exit", () =>
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -51,7 +91,9 @@ namespace PhoneBook
 
             try
             {
-                _connString = "Server=localhost;Port=5432;User Id=postgres;Password=12345;Database=PhoneBook_DB";
+                _connString = "Server=localhost;Port=5432;User Id=postgres;Password=77031985;Database=PhoneBook_DB";
+
+               // _connString = "Server=localhost;Port=5432;User Id=postgres;Password=12345;Database=PhoneBook_DB";
                 _connection = new NpgsqlConnection(_connString);
                 _connection.Open();
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -122,6 +164,7 @@ namespace PhoneBook
 
             int count = reader.FieldCount;
 
+            
             string[] columnNames = new string[count];
             for (int i = 0; i < count; i++)
             {
