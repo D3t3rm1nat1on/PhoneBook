@@ -10,7 +10,7 @@ namespace PhoneBook
         private static int _accessMode;
         private static bool _exit = false;
 
-        private const int TableWidth = 25;
+        private const int TableWidth = 150;
         private static NpgsqlConnection _connection;
         private static string _connString;
         private static ConsoleColor queryColor = ConsoleColor.Yellow;
@@ -31,7 +31,7 @@ namespace PhoneBook
             {
                 "show", () =>
                 {
-                    string sqlQuery = "select * from table_name";
+                    string sqlQuery = "select * from phonebook";
                     PrintResultQuery(sqlQuery);
                 }
 
